@@ -21,12 +21,9 @@ if __name__ == "__main__":
 
     def generate_actions():
         for doc in tqdm(data):
-            yield ({
-                "_index": "tweets",
-                "_source": doc,
-                "_type": "tweet",
-                "_id": doc["id"]
-            })
+            yield (
+                {"_index": "tweets", "_source": doc, "_type": "tweet", "_id": doc["id"]}
+            )
 
     for success, info in parallel_bulk(es, generate_actions()):
         if not success:
