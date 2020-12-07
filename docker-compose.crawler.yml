@@ -8,9 +8,14 @@ services:
       dockerfile: Dockerfile.crawler
     networks:
       - net
-
+    volumes:
+      - ./model:/model
     command: ["python", "main.py"]
 
 networks:
   net:
     external: true
+
+volumes:
+  model:
+    driver: local
