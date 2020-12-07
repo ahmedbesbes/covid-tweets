@@ -1,0 +1,16 @@
+version: "2.2"
+services:
+  crawler:
+    container_name: "crawler"
+    hostname: "crawler"
+    build:
+      context: .
+      dockerfile: Dockerfile.crawler
+    networks:
+      - net
+
+    command: ["python", "main.py"]
+
+networks:
+  net:
+    external: true

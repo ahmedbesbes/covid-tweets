@@ -1,0 +1,8 @@
+.ipynb_checkpoints
+__pycache__
+
+data/
+es_data/nodes
+
+model/
+notebooks/

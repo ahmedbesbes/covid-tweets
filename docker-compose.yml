@@ -1,0 +1,79 @@
+version: "2.2"
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    container_name: elasticsearch
+    hostname: elasticsearch
+    environment:
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+      - 9300:9300
+    volumes:
+      - ./es_data:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+      - net
+    # logging:
+    #   driver: none
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.10.0
+    container_name: kibana
+    hostname: kibana
+    ports:
+      - 5601:5601
+    links:
+      - elasticsearch:elasticsearch
+    depends_on:
+      - elasticsearch
+    networks:
+      - elastic
+    logging:
+      driver: none
+
+  backend:
+    container_name: backend
+    depends_on:
+      - elasticsearch
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    command:
+      [
+        "./wait-for-it.sh",
+        "elasticsearch:9200",
+        "--timeout=180",
+        "--",
+        "python",
+        "app.py",
+      ]
+    volumes:
+      - ./es_data:/data
+    networks:
+      - elastic
+
+  # crawler:
+  #   container_name: crawler
+  #   hostname: crawler
+  #   depends_on:
+  #     - elasticsearch
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.crawler
+
+  #   command: bash -c "while ping -c1 backend &>/dev/null; do sleep 1; done; echo backend finished! && python main.py"
+  #   networks:
+  #     - elastic
+  #   volumes:
+  #     - ./model:/model
+
+volumes:
+  es_data:
+    driver: local
+
+networks:
+  elastic:
+    driver: bridge
+  net:
+    external: true
