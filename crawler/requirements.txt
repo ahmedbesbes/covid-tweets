@@ -1,5 +1,5 @@
-# tqdm
-# torch
-# simpletransformers
-# spacy
+tqdm
+torch
+simpletransformers
+spacy
 elasticsearch
